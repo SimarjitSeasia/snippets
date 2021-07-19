@@ -57,7 +57,7 @@ public class LoginPage : PageView
         form.AddField("password", password);
         PopUpManager.Instance.LoadingStatus(true);
 
-        var request = new WebServices(TravXUrls.LoginUrl, form);
+        var request = new WebServices(ConstantUrls.LoginUrl, form);
         request.OnResponse += OnLoginResponse;
     }
 
@@ -71,7 +71,7 @@ public class LoginPage : PageView
             form.AddField("password", Password.text.Trim());
             PopUpManager.Instance.LoadingStatus(true);
             PlayerPrefs.SetString(TravXConstants.PasswordSavedKey, Password.text.Trim());
-            new WebServices(TravXUrls.LoginUrl, form).OnResponse += OnLoginResponse;
+            new WebServices(ConstantUrls.LoginUrl, form).OnResponse += OnLoginResponse;
         }
         else
         {
@@ -84,8 +84,6 @@ public class LoginPage : PageView
     {
         if (error == null)
         {
-            print(" " + response.ToString());
-            //PopUpManager.Instance.ShowToast("Logged in sccuessfully");
             string token = response["access_token"];
             PlayerPrefs.SetString(TravXConstants.AccessTokenSavedKey, token);
             user.Id = response["user"]["id"];
@@ -97,8 +95,6 @@ public class LoginPage : PageView
             user.Height = response["user"]["height"];
             user.Weight = response["user"]["weight"];
             user.Gender = response["user"]["gender"];
-            //user.Country = response["user"]["weight"];
-            //user.State = response["user"]["weight"];
 
 
             if (!string.IsNullOrEmpty(response["user"]["social_id"]))
@@ -128,10 +124,6 @@ public class LoginPage : PageView
                    AchievementManager.Instance.IncreaseAchivement(AchievementType.LogIn, 1);
                else if (difference.Days > 1)
                    AchievementManager.Instance.IncreaseAchivement(AchievementType.LogIn, 1, true);
-               else
-               {
-
-               }
            }
            else
                AchievementManager.Instance.IncreaseAchivement(AchievementType.LogIn, 1, true);
@@ -143,7 +135,7 @@ public class LoginPage : PageView
         }
         else
         {
-            var _user = PersistanceManager.GetSavedData<UserDetails>(TravXConstants.UserDetailsKey);
+            var _user = PersistanceManager.GetSavedData<UserDetails>(Constants.UserDetailsKey);
 
             print("Login Error" + error);
             if (error.Contains("Wrong credentials"))
@@ -173,7 +165,7 @@ public class LoginPage : PageView
             return "Please enter a valid email address";
         if (Password.text.Length < 1)
             return "Please enter password";
-        if (!Regex.IsMatch(Password.text, TravXConstants.PasswordPattern))
+        if (!Regex.IsMatch(Password.text, Constants.PasswordPattern))
             return "Password must contain uppercase/lowercase and numbers. Min 6 and max 30 characters.";
         return string.Empty;
     }
